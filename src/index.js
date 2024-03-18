@@ -5,7 +5,9 @@ import WebFontLoaderPlugin from 'phaser3-rex-plugins/plugins/webfontloader-plugi
 import Game from "./scenes/Game"
 import UI from "./scenes/UI"
 import Loading from "./scenes/Loading"
-import GamepadHandler from "./scenes/GamepadHandler"
+import MainMenu from "./scenes/MainMenu"
+import ResultsMenu from "./scenes/ResultsMenu"
+
 
 try { 
 
@@ -16,7 +18,7 @@ const config = {
     transparent:false,
     parent:"phaserContainer",
     fps: {
-      //limit: 60
+      limit: 60
     },
     scale: {
       mode: Phaser.Scale.FIT,
@@ -24,23 +26,21 @@ const config = {
       height: 1080,
       width: 1920,
     }, 
-    input:{
-      gamepad:true
-    },
     physics: {
       default: "arcade",
       arcade:{
         gravity:{
-          y:1200
+          y:0
         },
         debug:false
       }
     },
     scene: [
       Loading,
+      MainMenu,
       Game,
       UI,
-      GamepadHandler
+      ResultsMenu
     ],
     dom: {
         createContainer: true

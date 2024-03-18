@@ -10,8 +10,6 @@ import { SFXManager } from "../helpers/sfxManager"
 import { GlobalStuff } from "../helpers/GlobalStuff" 
 import { preloadGraphics } from "../helpers/GraphicsLoader" 
 
-//Animations
-import { setupPlayerAnimations } from "../factories/Player" 
 
 //Data
 import { Palette } from "../data/Palette" 
@@ -66,10 +64,10 @@ export default class Loading extends Phaser.Scene {
   create() {
     MusicManager.setup(this)
     MusicManager.play(0,this)
-    setupPlayerAnimations(this)
+ 
     this.fadeOut(500)
     setTimeout(()=>{
-      this.scene.start("game")
+      this.scene.start("mainmenu")
     },500)
   }
   
