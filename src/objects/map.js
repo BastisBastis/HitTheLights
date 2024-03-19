@@ -148,6 +148,9 @@ export class Map {
     this.roads.forEach(road=>{
       road.update(delta)
     })
+    this.crossings.forEach(crossing=>{
+      crossing.update(delta)
+    })
   }
 }
 

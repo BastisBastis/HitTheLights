@@ -2,11 +2,17 @@ export const degToRad=(degrees)=>{
   return degrees*(Math.PI/180)
 }
 
+
+
 export const getDistance=(a,b) =>{
   const xDist=a.x-b.x
   const yDist=a.y-b.y
   
   return Math.sqrt(xDist*xDist+yDist*yDist)
+}
+
+export const getLength=(vec)=> {
+  return getDistance(vec, {x:0, y:0})
 }
   
 export const getNormalizedVector2=(vec) =>{
@@ -69,6 +75,36 @@ export const lerpColor = (a, b, amount) => {
           rb = ab + amount * (bb - ab);
 
     return (rr << 16) + (rg << 8) + (rb | 0);
+}
+
+export const hexToRgb=(hex)=>{
+  const r = hex >> 16,
+    g = hex >> 8 & 0xff,
+    b = hex & 0xff
+    
+  return {r,g,b}
+}
+
+export const rgbToHex=(r,g,b)=>{
+  return (r << 16) + (g << 8) + (b | 0)
+}
+
+const componentToHex=(c) => {
+  var hex = c.toString(16);
+  return hex.length == 1 ? "0" + hex : hex;
+}
+
+export const rgbToHexString=(r, g, b) => {
+  return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+export const hexStringToRgb=(hex) => {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
 }
 
 export const clamp=(value,max) => {

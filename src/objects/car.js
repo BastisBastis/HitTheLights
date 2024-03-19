@@ -27,7 +27,7 @@ export class Car {
       x,
       y,
       width,
-      this.length,
+      this.length*1,
       0xff00ff,
       0
     )
@@ -44,9 +44,11 @@ export class Car {
     this.resetSpeed()
     if (this.dir=="w") {
       this.sprite.rotation=Math.PI
+      this.graphics.rotation=Math.PI/2
     }
     else if (this.dir=="e") {
       //this.sprite.rotation=Math.PI
+      this.graphics.rotation=Math.PI/2
     }
     else if (this.dir=="n") {
       this.sprite.rotation=-Math.PI/2

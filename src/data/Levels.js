@@ -116,8 +116,8 @@ Levels.push(
 Levels.push(
   getEvenLevelData(
     100000,
-    2000,
-    10015,
+    1000,
+    10020,
     1,
     3, //columns
     3, //rows

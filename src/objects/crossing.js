@@ -5,6 +5,8 @@ import { Store } from "../helpers/Store"
 let switchTime=1000
 let tightPassFactor=1.1
 const returnTimes=[500,1000,2000]
+const loopFrequencies=[1000,2000,3000]
+const cleverLookDistance=50
 
 export class Crossing {
   
@@ -27,9 +29,14 @@ export class Crossing {
     this.yellowColor=0xffff00
     const lightHeight=size*.4
     this.roads=roads
+    this.looping=false
+    this.loopFrequency=1000
+    this.loopId=false
+    this.clever=false
     
     this.switching=false
     this.blockedByReturn=false
+    
     
     
     this.boxGraphics= scene.add.rectangle(x,y,size,size,0xffffff, 0.1)
@@ -140,8 +147,25 @@ export class Crossing {
   // 0=normal
   // 1=return type (first pass)
   // 2=return type (second pass)
+  // 3=loop
+  // 4=clever
   toggle(type=0, option = 0) {
     try { 
+    
+    if (Store.selectedLightType==3 && type == 0) {
+      this.clever=true
+      return
+    }
+    
+    if (this.clever && type!==4) {
+      this.clever=false
+    }
+    
+    if (this.looping && type!=3) {
+      clearInterval(this.loopId)
+      this.loopId=false
+      this.looping=false
+    }
     
     if (type==0&&Store.selectedLightType==1) {
       type=1
@@ -163,6 +187,20 @@ export class Crossing {
     
     if (type==1) {
       this.blockedByReturn=true
+    }
+    
+    
+    
+    if (type==0 && Store.selectedLightType==2) {
+      
+      this.loopFrequency=loopFrequencies[Store.lightTypeOptions[2]] + switchTime
+      this.looping=true
+      this.loopId=setInterval(
+        ()=>{
+          this.toggle(3)
+        }, 
+        this.loopFrequency
+      )
     }
     
     
@@ -212,7 +250,168 @@ export class Crossing {
     } catch (er) {console.log(er.message,er.stack); throw er} 
   }
   
-  performSwitch() {
+  
+  cleverCheck() {
+    
+    let numXcars=0
+    let numYcars=0
+    
+    
+    this.roads.forEach(road=>{
+      
+      if (road.dir=="x") {
+        
+        //check west
+        let startX=this.x-this.width/2 //west side of Crossing
+          - road.width*0.15 // -car lookahead
+          - road.width*0 // back of car
+        let y=road.getLanePosition("e")
+        let firstCheck=true
+        let x=startX
+        while (true) {
+          //this.scene.add.rectangle(x,y,10,10,0xffff00)
+          
+          let carsInPoint=road.cars.filter(car=>{
+            return car.containsPoint({x,y})
+          })
+          if (carsInPoint.length==0 ) {
+            if (firstCheck) {
+              x-=road.width*.4
+              firstCheck=false
+              continue
+            }
+            break
+          }
+          firstCheck=false
+            
+          const car = carsInPoint[0]
+          x = car.x-car.width-car.length*.7
+          numXcars+=1
+        }
+        
+        
+        
+      
+            
+        //check east
+       startX=this.x+this.width/2 //east side of Crossing
+          + road.width*0.15 // -car lookahead
+          + road.width*0 // back of car
+        y=road.getLanePosition("w")
+        
+        
+        firstCheck= true
+        x=startX
+        while (true) {
+          //this.scene.add.rectangle(x,y,10,10,0xffff00)
+          let carsInPoint=road.cars.filter(car=>{
+            //console.log("lanePos",y,car.y)
+            return car.containsPoint({x,y})
+          })
+          if (carsInPoint.length==0 ) {
+            if (firstCheck) {
+              x+=road.width*.4
+              firstCheck=false
+              continue
+            }
+            break
+          }
+          firstCheck=false
+          const car = carsInPoint[0]
+          x = car.x+car.width+car.length*.7
+          numXcars+=1
+        }
+        
+        
+        
+      }
+      
+      if (road.dir=="y") {
+        
+        //check north
+        let startY=this.y-this.width/2 //north side of Crossing
+          - road.width*0.15 // -car lookahead
+          - road.width*0 // back of car
+        let x=road.getLanePosition("s")
+        let firstCheck=true
+        let y=startY
+        while (true) {
+          //this.scene.add.rectangle(x,y,10,10,0xffff00)
+          let carsInPoint=road.cars.filter(car=>{
+            return car.containsPoint({x,y})
+          })
+          if (carsInPoint.length==0 ) {
+            if (firstCheck) {
+              y-=road.width*.4
+              firstCheck=false
+              continue
+            }
+            break
+          }
+          firstCheck=false
+          const car = carsInPoint[0]
+          y = car.y-car.width-car.length*.7
+          numYcars+=1
+        }
+        
+        
+        
+      
+            
+        //check south
+       startY=this.y+this.width/2 //east side of Crossing
+          + road.width*0.15 // -car lookahead
+          + road.width*0 // back of car
+        x=road.getLanePosition("n")
+        
+        
+        firstCheck=true
+        y=startY
+        while (true) {
+          //this.scene.add.rectangle(x,y,10,10,0xffff00)
+          let carsInPoint=road.cars.filter(car=>{
+            //console.log("lanePos",y,car.y)
+            return car.containsPoint({x,y})
+          })
+          if (carsInPoint.length==0 ) {
+            if (firstCheck) {
+              y+=road.width*.4
+              firstCheck=false
+              continue
+            }
+            break
+          }
+          firstCheck=false
+          const car = carsInPoint[0]
+          y = car.y+car.width+car.length*.7
+          numYcars+=1
+        }
+        
+        
+        
+      }
+      
+    })
+    
+    if (this.x==980&&this.y==540)
+      console.log(numXcars,numYcars)
+    
+    if (numXcars>numYcars) {
+      if (this.lights.y) {
+        this.toggle(4)
+      }
+    }
+    else if (numXcars<numYcars) {
+      if (this.lights.x) {
+        this.toggle(4)
+      }
+    }
+    
+  }
+  
+  update(delta) {
+    if (this.clever)
+      this.cleverCheck()
     
   }
   

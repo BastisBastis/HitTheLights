@@ -16,6 +16,10 @@ import { Levels } from "../data/Levels"
 //Objects
 
 
+//UI Elements
+import { Button } from "../ui/Button" 
+
+
 export default class ResultsMenu extends Phaser.Scene {
   constructor() {
     super("resultsmenu")
@@ -49,7 +53,16 @@ export default class ResultsMenu extends Phaser.Scene {
     
     
     if (levelIndex< Levels.length-1) {
-      this.add.text(cam.centerX, cam.height*.65, "NEXT LEVEL", {
+      const nextLevel = new Button(
+        this,
+        cam.centerX, 
+        cam.height*.65, 
+        "NEXT LEVEL",
+        {
+          onClick:()=>this.nextLevel()
+        }
+    )
+      this.add.text(cam.centerX, cam.height*1.65, "NEXT LEVEL", {
         fontSize:128,
         fontFamily:GlobalStuff.FontFamily,
         color:Palette.white.string
@@ -57,7 +70,17 @@ export default class ResultsMenu extends Phaser.Scene {
     }
     
     
-    this.add.text(cam.centerX, cam.height*.8, "MAIN MENU", {
+    const nextLevel = new Button(
+      this,
+      cam.centerX, 
+      cam.height*.85, 
+      "MAIN MENU",
+      {
+        onClick:()=>this.openMainMenu()
+      }
+    )
+    
+    this.add.text(cam.centerX, cam.height*1.8, "MAIN MENU", {
       fontSize:128,
       fontFamily:GlobalStuff.FontFamily,
       color:Palette.white.string

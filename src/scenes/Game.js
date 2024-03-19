@@ -27,7 +27,7 @@ export default class Game extends Phaser.Scene {
   }
   
   create({
-    levelIndex=4
+    levelIndex=0
   }) {
     try { 
     //Background

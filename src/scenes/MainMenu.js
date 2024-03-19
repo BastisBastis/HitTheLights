@@ -13,6 +13,9 @@ import { Palette } from "../data/Palette"
 
 //Objects
 
+//UI elements
+import { Button } from "../ui/Button" 
+
 
 export default class MainMenu extends Phaser.Scene {
   constructor() {
@@ -25,19 +28,25 @@ export default class MainMenu extends Phaser.Scene {
   }) {
     const cam = this.cameras.main
     
-    this.add.rectangle(cam.centerX, cam.centerY, cam.width, cam.height, 0xaaaaff)
+    this.add.rectangle(cam.centerX, cam.centerY, cam.width, cam.height, Palette.yellow1.hex)
     
     this.add.text(cam.centerX, cam.height*.25, "HIT THE LIGHTS", {
       fontSize:128,
       fontFamily:GlobalStuff.FontFamily,
-      color:Palette.white.string
+      color:Palette.black.string
     }).setOrigin(.5,.5)
     
-    this.add.text(cam.centerX, cam.height*.65, "START", {
-      fontSize:128,
-      fontFamily:GlobalStuff.FontFamily,
-      color:Palette.white.string
-    }).setOrigin(.5,.5).setInteractive().on("pointerdown", this.startGame, this)
+    this.startButton = new Button(
+      this,
+      cam.centerX, 
+      cam.height*.65, 
+      "START",
+      {
+        onClick:()=>this.startGame()
+      }
+    )
+    
+    
     
   }
   

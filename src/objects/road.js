@@ -99,6 +99,19 @@ export class Road {
     })
   }
   
+  getLanePosition(dir) {
+    let base = this.dir=="x"?this.y:this.x
+    
+    let adjustment = this.width/6
+    
+    if (dir=="w"||dir=="s") {
+      adjustment*=-1
+    }
+    
+    return base+adjustment
+    
+  }
+  
   update(delta) {
     this.removeDestroyedCars()
   }
