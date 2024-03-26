@@ -92,7 +92,7 @@ export default class UI extends Phaser.Scene {
     EventCenter.on("hideLightTypeIcon", this.hideActiveLightTypeIcon, this)
     EventCenter.on("point", this.showPoint, this)
     
-    this.scene.input.keyboard.on("keydown", this.keyDown, this)
+    this.input.keyboard.on("keydown", this.keyDown, this)
     
   }
   

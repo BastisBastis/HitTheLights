@@ -93,6 +93,10 @@ export class LightTypeButton {
     */
   }
   
+  click() {
+    this.bg.click()
+  }
+
   setSelected(value) {
     this.selected=value
     
