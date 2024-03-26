@@ -16,10 +16,11 @@ export class Window {
     blockAlpha=0,
     blockerTweenDuration=0,
     cornerRadius=0,
-    onClick
+    onClick,
+    blockerOnClick
   }={}) {
     if (blockBackground) {
-      this.bgBlocker=new BgBlocker(scene,depth,blockAlpha,undefined,blockerTweenDuration)
+      this.bgBlocker=new BgBlocker(scene,depth,blockAlpha,blockerOnClick,blockerTweenDuration)
     }
     this.scene=scene
       
@@ -39,6 +40,10 @@ export class Window {
     
     this._x=x
     this._y=y
+    
+    this.depth=depth
+    this.height=height
+    this.width=width
     
     this.bg
       .setOrigin(0.5,0.5)
@@ -101,6 +106,10 @@ export class Window {
       this.bgBlocker.destroy()
     }
     this.bg.destroy()
+    this.children.forEach(child=>{
+      if (child.destroy)
+        child.destroy()
+    })
   }
   
 }

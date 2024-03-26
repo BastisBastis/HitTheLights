@@ -6,6 +6,16 @@ import { Palette } from "../data/Palette"
 
 const stuckInTrafficPointInterval = 1000
 
+const colors=[
+ Palette.teal1.hex,
+ Palette.yellow2.hex,
+ Palette.pink1.hex,
+ Palette.pink2.hex,
+ Palette.red1.hex,
+ Palette.white.hex,
+ Palette.green1.hex,
+]
+
 export class Car {
   
   constructor(scene, x, y, width, dir, road) {
@@ -32,9 +42,14 @@ export class Car {
       0
     )
     
+    const rnd=Math.floor(Math.random()*colors.length)
+    
+    
+    const color=colors[rnd]
+    
     this.sprite=scene.add.sprite(
      x,y,"car1"
-    ).setTint(0xaaffff)
+    ).setTint(color)
     .setScale(width/320)
     //this.sprite.setTexture("car")
     
@@ -219,6 +234,9 @@ export class Car {
   
   handlePoints(delta) {
     //negative points
+    
+    delta =  delta*(1+(.5-this.scene.spawnFactor*.5))
+    
     if (this.xSpeed==0 && this.ySpeed==0) {
      const oldTime = this.stuckInTrafficTime
      this.stuckInTrafficTime+=delta

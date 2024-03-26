@@ -15,7 +15,14 @@ export const resetStore = ()=>{
   const tmpStore={
     
     cash:0,
-    totalScore:0
+    totalScore:0,
+    ownedLights:[
+      0,0,0
+    ],
+    activeLights:[
+      0,0,0,0
+    ],
+    endlessMode:false
     
   }
   

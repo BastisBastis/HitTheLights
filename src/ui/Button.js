@@ -29,7 +29,7 @@ export class Button extends Window {
       fontColor=Palette.black.string,
       hoverFontColor=fontColor,
       downFontColor=fontColor,
-      cornerRadius=8,
+      cornerRadius=16,
       borderThickness=2,
       backgroundColor=Palette.gray1.hex,
       hoverBackgroundColor=Palette.blue1.hex,
@@ -169,6 +169,16 @@ export class Button extends Window {
      
        
   
+  }
+  
+  setBackgroundColor(color) {
+   this.tweenButton(
+    color,
+    this.backgroundAlpha,
+    this.fontColor,
+    this.fontSize
+   )
+   this.backgroundColor=color
   }
   
  tweenButton(toColor,toAlpha,toLabelColor,toFontSize) {

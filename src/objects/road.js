@@ -4,6 +4,8 @@ import { Car } from "./car"
 //data
 import { Palette } from "../data/Palette" 
 
+const carCount=0
+
 export class Road {
   
   constructor(scene, x,y , dir, length, width) {
@@ -15,7 +17,7 @@ export class Road {
     this.width=width
     
     
-    this.graphics= scene.add.rectangle(x,y,width,length,Palette.gray1.hex)
+    this.graphics= scene.add.rectangle(x,y,width,length,Palette.gray3.hex)
     if (dir=="x")
       this.graphics.rotation=Math.PI/2
       
@@ -33,18 +35,24 @@ export class Road {
   
   spawnCar() {
     
-    let dir, x, y
+    let dir, x, y, dx, dy
+    const d= this.width*.75
+    
     if (this.scene.rng.between(0,1)<1) {
       
       if (this.dir=="x") {
         x=this.x-this.length/2
         y=this.y+this.width/6
         dir="e"
+        dx=-1
+        dy=0
       }
       else {
         y=this.y+this.length/2
         x=this.x+this.width/6
         dir="n"
+        dx=0
+        dy=1
       }
       
     }
@@ -54,12 +62,49 @@ export class Road {
         x=this.x+this.length/2
         y=this.y-this.width/6
         dir="w"
+        dx=1
+        dy=0
       }
       else {
         y=this.y-this.length/2
         x=this.x-this.width/6
         dir="s"
+        dx=0
+        dy=-1
       }
+      
+    }
+    
+    
+    
+    while (true) {
+      
+      const blockingCars=this.cars.filter(car=>{
+        
+        
+        
+        return (car.containsPoint({
+          x,
+          y
+        }) ||
+          car.containsPoint({
+          x:x-dx*this.width*.48,
+          y:y-dy*this.width*.48
+        })
+          ||
+          car.containsPoint({
+          x:x+dx*this.width*.48,
+          y:y+dy*this.width*.48
+        })
+        )
+      })
+      
+      if (blockingCars.length==0)
+        break
+        
+      
+      x+=dx*this.width
+      y+=dy*this.width
       
     }
     

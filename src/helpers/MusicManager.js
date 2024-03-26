@@ -1,14 +1,21 @@
-//import Main1URL from "./assets/music/Main1.m4a"
+import Main1URL from "../assets/music/GameTune1.m4a"
+import MenuURL from "../assets/music/Menu.m4a" 
 
 const trackData = [
-  /*
+  
   {
     key:"main1",
     group:"main",
     url:Main1URL,
     volume:0.5
   },
-  */
+  {
+    key:"menu",
+    group:"menu",
+    url:MenuURL,
+    volume:0.5
+  },
+  
 ]
 
 export const MusicManager={
@@ -31,7 +38,7 @@ export const MusicManager={
    nextTrack.ref.play()
    nextTrack.isPlaying=true
    
-   let  fadeDuration=100
+   let  fadeDuration=500
    if (currentTrackIndex>-1) {
      
      const currentTrack=MusicManager.tracks[currentTrackIndex]
@@ -94,8 +101,10 @@ export const MusicManager={
  }
  
  MusicManager.preload=(scene)=>{
-   
+   try { 
    trackData.forEach(track=>{
+    
      scene.load.audio(track.key,track.url)
    })
+   } catch (er) {console.log(er.message,er.stack); throw er} 
  }

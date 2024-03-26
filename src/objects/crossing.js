@@ -2,6 +2,8 @@ import Phaser from "phaser"
 
 import { Store } from "../helpers/Store" 
 
+import { EventCenter } from "../helpers/EventCenter" 
+
 let switchTime=1000
 let tightPassFactor=1.1
 const returnTimes=[500,1000,2000]
@@ -142,6 +144,31 @@ export class Crossing {
     
   }
   
+  requestShowIcon(index) {
+    
+    const key=[
+      false,
+      false,
+      "LoopIcon",
+      "CleverIcon"
+    ][index]
+    EventCenter.emit("showLightTypeIcon",{
+      key:key,
+      position:{
+        x:this.x-this.width/2,
+        y:this.y-this.height/2
+      }
+    })
+  }
+  
+  requestHideIcon() {
+    EventCenter.emit("hideLightTypeIcon",{
+        x:this.x-this.width/2,
+        y:this.y-this.height/2
+       }
+      )
+  }
+  
   
   //types
   // 0=normal
@@ -152,20 +179,49 @@ export class Crossing {
   toggle(type=0, option = 0) {
     try { 
     
+    
+    
+    if (type==0 && !this.looping && Store.selectedLightType==2 && Store.activeLights[2] >= Store.ownedLights[1]) {
+      console.log("Already used all looping lights - "+Store.activeLights[2])
+      return
+    }
+    
+    if (type==0 && !this.clever && Store.selectedLightType==3 && Store.activeLights[3] >= Store.ownedLights[2]) {
+      console.log("Already used all auto-lights - "+ Store.activeLights[3])
+      return
+    }
+    
+    if (this.looping && type!=3) {
+      Store.activeLights[2]--
+      this.requestHideIcon()
+      clearInterval(this.loopId)
+      this.loopId=false
+      this.looping=false
+      EventCenter.emit("lightTypeAmountUpdated")
+    }
+    
     if (Store.selectedLightType==3 && type == 0) {
-      this.clever=true
+      if (!this.clever) {
+        
+        Store.activeLights[3]++
+        this.clever=true
+        this.requestShowIcon(3)
+      } else {
+        Store.activeLights[3]--
+        this.clever=false
+        this.requestHideIcon()
+      }
+      EventCenter.emit("lightTypeAmountUpdated")
       return
     }
     
     if (this.clever && type!==4) {
+      Store.activeLights[3]--
       this.clever=false
+      this.requestHideIcon()
     }
     
-    if (this.looping && type!=3) {
-      clearInterval(this.loopId)
-      this.loopId=false
-      this.looping=false
-    }
+    
     
     if (type==0&&Store.selectedLightType==1) {
       type=1
@@ -174,6 +230,7 @@ export class Crossing {
     
     
     if (this.switching) {
+      EventCenter.emit("lightTypeAmountUpdated")
       return false
     }
     
@@ -182,6 +239,7 @@ export class Crossing {
     }
     
     if (this.blockedByReturn){
+      EventCenter.emit("lightTypeAmountUpdated")
       return
     }
     
@@ -192,7 +250,10 @@ export class Crossing {
     
     
     if (type==0 && Store.selectedLightType==2) {
-      
+      if (!this.looping) {
+        this.requestShowIcon(2)
+        Store.activeLights[2]++
+      }
       this.loopFrequency=loopFrequencies[Store.lightTypeOptions[2]] + switchTime
       this.looping=true
       this.loopId=setInterval(
@@ -245,7 +306,7 @@ export class Crossing {
     
     
     
-    
+    EventCenter.emit("lightTypeAmountUpdated")
     
     } catch (er) {console.log(er.message,er.stack); throw er} 
   }
@@ -393,8 +454,7 @@ export class Crossing {
       
     })
     
-    if (this.x==980&&this.y==540)
-      console.log(numXcars,numYcars)
+    
     
     if (numXcars>numYcars) {
       if (this.lights.y) {

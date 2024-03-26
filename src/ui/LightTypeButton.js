@@ -2,6 +2,9 @@ import Phaser from "phaser"
 
 import { GlobalStuff } from "../helpers/GlobalStuff" 
 
+import { Button } from "./Button" 
+
+import { Palette } from "../data/Palette" 
 
 export class LightTypeButton {
   
@@ -15,12 +18,14 @@ export class LightTypeButton {
   ) {
     
     this.width=100
-    this.height=100
+    this.height=this.width
     
     const borderThickness=10
-    this.bgColor=0xffffff
-    this.selectedBgColor=0x00bbff
+    this.bgColor=Palette.gray1.hex
+    this.selectedBgColor=Palette.green1.hex
     const borderColor=0x000000
+    
+    /*
     
     this.bg=scene.add.rectangle(
       x,
@@ -31,6 +36,22 @@ export class LightTypeButton {
     ).setStrokeStyle(
       borderThickness,
       borderColor
+    )
+    */
+    
+    this.bg=new Button(
+      scene,
+      x,
+      y,
+      "",
+      {
+        width:this.width,
+        height:this.height,
+        depth:0,
+        onClick: onClick,
+        backgroundColor:this.bgColor
+      }
+   
     )
     
     const texture = [
@@ -66,8 +87,10 @@ export class LightTypeButton {
     
     this.selected=false
     
+    /*
     this.bg.setInteractive()
     .on("pointerdown",onClick, this)
+    */
   }
   
   setSelected(value) {
@@ -75,7 +98,7 @@ export class LightTypeButton {
     
     const color=value?this.selectedBgColor:this.bgColor
     
-    this.bg.setFillStyle(color)
+    this.bg.setBackgroundColor(color)
   }
   
   toggle() {

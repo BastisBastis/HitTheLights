@@ -4,7 +4,7 @@ import { Store } from "./Store"
 const numOptions=[
   1,
   3,
-  3,
+  1,
   1
 ]
 
@@ -16,7 +16,7 @@ const numOptions=[
 const optionLabels=[
   null,
   [0.5,1,2],
-  [1,2,3],
+  null,
   null
 ]
 
@@ -71,6 +71,10 @@ export class LightTypeManager {
     const labels=optionLabels[index]
     if (labels && labels.length>option) {
       return labels[option]
+    }
+    
+    if (index>1) {
+      return Store.ownedLights[index-1]-Store.activeLights[index]
     }
     
     return false
