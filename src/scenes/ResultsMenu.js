@@ -19,6 +19,8 @@ import { Levels } from "../data/Levels"
 //UI Elements
 import { Button } from "../ui/Button" 
 import { EquipmentMenu } from "../ui/EquipmentMenu" 
+import { ModalTextInput } from "../ui/ModalTextInput" 
+import { HighscoreWindow } from "../ui/HighscoreWindow" 
 
 
 export default class ResultsMenu extends Phaser.Scene {
@@ -102,6 +104,56 @@ export default class ResultsMenu extends Phaser.Scene {
     } catch (er) {console.log(er.message,er.stack); throw er} 
   }
   
+  startHighscoreProcess(time, highscore) {
+    
+    ModalTextInput.prompt(this,{
+      string:"Enter name for highscore:"
+    }).then((name)=>{
+      fetch('https://htl.bastismusic.se/api/highscore?appId=htl-time&playerName='+name+'&score='+time, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      }).then(res=>{
+        new HighscoreWindow(this)
+      }).catch(er=>{
+        console.log("error submitting highscore", er)
+      })
+    }).catch((er)=>{
+      console.log(er)
+    })
+    
+  }
+  
+  checkHighscore(time) {
+    
+    const numScoresToShow=5
+    
+    const url = 'https://htl.bastismusic.se/api/highscore?appId=htl-time'
+
+    fetch(url).then(response=>response.json()).then(res=>{
+      if (res.topScores) {
+       try { 
+       
+       if (res.topScores.length<numScoresToShow || res.topScores[numScoresToShow-1].score < time) {
+         
+         this.startHighscoreProcess(time, res.topScores)
+         
+       } else {
+         console.log("Did not make it to Highscore list")
+       }
+       
+       } catch (er) {console.log(er.message,er.stack); throw er} 
+      } else {
+       console.log(res)
+      }
+    }).catch(er=>{
+      
+      console.log("er: ",er)
+    })
+  }
+  
   showPostEndlessResults(time) {
     const cam = this.cameras.main
     
@@ -137,6 +189,8 @@ export default class ResultsMenu extends Phaser.Scene {
       fontFamily:GlobalStuff.FontFamily,
       color:Palette.black.string
     }).setOrigin(.5,.5)
+    
+    this.checkHighscore(time)
   }
   
   showPreEndlessResults(result) {
